@@ -7,177 +7,521 @@
   <meta name="description" content="Jerry Zhang — second-year Electrical Engineering student at UBC. Personal website and project portfolio." />
 
   <style>
-    :root {
-      --text: #111;
-      --muted: #555;
-      --border: #eaeaea;
-      --bg: #ffffff;
+    :root{
+      --bg: #f6f7f9;
+      --surface: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --border: #e5e7eb;
+      --shadow-sm: 0 8px 20px rgba(15, 23, 42, 0.06);
+      --radius: 16px;
+
+      --nav-bg: #2f343a;      /* darker grey navbar */
+      --nav-text: #e7e9ee;
+      --nav-muted: #b9c0cb;
+      --nav-hover: rgba(255,255,255,0.10);
+      --nav-outline: rgba(255,255,255,0.18);
+
+      --nav-h: 72px;
     }
 
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
-
-    body {
+    body{
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      line-height: 1.6;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       color: var(--text);
       background: var(--bg);
+      line-height: 1.6;
     }
 
-    .container {
-      width: min(100%, 960px);
+    a{ color: inherit; text-decoration: none; }
+
+    .container{
+      width: min(1100px, calc(100% - 40px));
       margin: 0 auto;
-      padding: 0 20px;
     }
 
-    header {
+    /* --- NAV --- */
+    .nav-wrap{
       position: sticky;
       top: 0;
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--border);
+      z-index: 1000;
+      background: var(--nav-bg);
+      border-bottom: 1px solid rgba(255,255,255,0.10);
     }
 
-    .header-inner {
-      height: 64px;
+    .nav{
+      height: var(--nav-h);
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 18px;
     }
 
-    .logo {
-      font-weight: 700;
-      text-decoration: none;
+    .brand{
+      font-weight: 750;
+      letter-spacing: -0.02em;
+      padding: 10px 12px;
+      border-radius: 12px;
+      color: var(--nav-text);
+      transition: background 140ms ease;
+    }
+    .brand:hover{ background: var(--nav-hover); }
+
+    .nav-links{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-link{
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 12px;
+      color: var(--nav-muted);
+      transition: background 140ms ease, color 140ms ease, box-shadow 140ms ease;
+      outline: none;
+    }
+
+    .nav-link:hover{
+      background: var(--nav-hover);
+      color: var(--nav-text);
+      box-shadow: inset 0 0 0 1px var(--nav-outline);
+    }
+
+    .nav-link:focus-visible{
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.35);
+    }
+
+    .nav-cta{
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.08);
+      color: var(--nav-text);
+      transition: background 140ms ease, transform 140ms ease;
+    }
+    .nav-cta:hover{
+      background: rgba(255,255,255,0.12);
+      transform: translateY(-1px);
+    }
+
+    /* --- Projects Dropdown (links to sub-pages) --- */
+    .dropdown{ position: relative; }
+    .dropdown-trigger{ gap: 8px; }
+    .chev{
+      width: 14px;
+      height: 14px;
+      display: inline-block;
+      opacity: 0.85;
+    }
+
+    .dropdown-panel{
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 0;
+      width: 340px;
+      padding: 10px;
+      background: rgba(33, 36, 41, 0.98);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      box-shadow: 0 18px 50px rgba(0,0,0,0.28);
+
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 140ms ease, visibility 0s linear 140ms;
+    }
+
+    /* hover bridge to prevent flicker */
+    .dropdown-panel::before{
+      content:"";
+      position:absolute;
+      top:-10px;
+      left:0;
+      width:100%;
+      height:10px;
+    }
+
+    .dropdown:hover .dropdown-panel,
+    .dropdown:focus-within .dropdown-panel{
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transition: opacity 140ms ease;
+    }
+
+    .dropdown-title{
+      font-size: 13px;
+      color: rgba(231,233,238,0.75);
+      padding: 10px 10px 6px;
+    }
+
+    .dropdown-item{
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 10px;
+      border-radius: 12px;
+      color: rgba(231,233,238,0.92);
+      transition: background 140ms ease;
+    }
+    .dropdown-item:hover{
+      background: rgba(255,255,255,0.08);
+    }
+    .dropdown-item strong{ font-size: 14px; letter-spacing: -0.01em; }
+    .dropdown-item span{ font-size: 13px; color: rgba(231,233,238,0.70); }
+
+    /* --- Sections / Cards --- */
+    .spacer{ height: 18px; }
+
+    .hero{ padding: 42px 0 10px; }
+
+    .card{
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      padding: 34px;
+    }
+
+    .kicker{
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin: 0 0 10px;
+      font-weight: 800;
+    }
+
+    h1{
+      font-size: clamp(34px, 4vw, 52px);
+      line-height: 1.08;
+      margin: 0 0 12px;
+      letter-spacing: -0.03em;
+    }
+
+    .lead{
+      font-size: 18px;
+      color: var(--muted);
+      margin: 0;
+      max-width: 75ch;
+    }
+
+    .section{ padding: 18px 0 28px; }
+    h2{
+      margin: 0 0 10px;
+      font-size: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    /* --- EXPANDING PROJECTS STRIP --- */
+    .projects-strip{
+      margin-top: 14px;
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+      border-radius: var(--radius);
+    }
+
+    .projects-track{
+      display: flex;
+      gap: 16px;
+      height: 380px;
+      align-items: stretch;
+    }
+
+    .project-item{
+      position: relative;
+      height: 100%;
+      border-radius: 14px;
+      overflow: hidden;
+      flex: 1;
+      min-width: 0;
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 18px 24px -14px rgba(0,0,0,0.18);
+      transition: flex 380ms cubic-bezier(0.16, 1, 0.3, 1);
+      background: #111; /* fallback if no image */
+      cursor: pointer;
+    }
+
+    /* When hovering the strip, shrink others; expand hovered */
+    .projects-track:hover .project-item{ flex: 0.75; }
+    .projects-track:hover .project-item:hover{
+      flex: 3;
+      min-width: 520px;
+    }
+
+    /* Media layer: you can later swap to real images */
+    .project-media{
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.35);
+      transition: filter 220ms ease;
+    }
+    .project-item:hover .project-media{ filter: brightness(1); }
+
+    /* Text overlay */
+    .project-content{
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 26px;
+      background: linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.0) 72%);
+      color: white;
+    }
+
+    .project-title{
+      font-size: 1.35rem;
+      font-weight: 800;
+      margin: 0 0 8px;
+      letter-spacing: -0.02em;
+    }
+
+    .project-desc{
+      margin: 0;
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.92);
+
+      opacity: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: opacity 200ms ease, max-height 260ms ease;
+    }
+
+    .project-item:hover .project-desc{
+      opacity: 1;
+      max-height: 120px;
+    }
+
+    /* Make the entire card clickable */
+    .project-link{
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+    }
+
+    /* Contact pills */
+    .contact-line{
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    .pill{
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.8);
+      border-radius: 999px;
+      padding: 8px 12px;
+      transition: background 140ms ease, color 140ms ease;
+      color: var(--muted);
+    }
+    .pill:hover{
+      background: #fff;
       color: var(--text);
     }
 
-    nav a {
-      margin-left: 16px;
-      text-decoration: none;
-      color: var(--muted);
-    }
-
-    nav a:hover { color: var(--text); }
-
-    .hero {
-      padding: 72px 0 40px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    h1 {
-      font-size: clamp(32px, 4vw, 48px);
-      line-height: 1.1;
-      margin: 10px 0 12px;
-    }
-
-    .subtitle {
-      color: var(--muted);
-      max-width: 65ch;
-      margin: 0;
-    }
-
-    .section { padding: 56px 0; }
-    h2 { margin: 0 0 14px; font-size: 22px; }
-    p { margin: 0 0 12px; }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      margin-top: 14px;
-    }
-
-    .card {
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 16px;
-    }
-
-    .card h3 { margin: 0 0 8px; font-size: 16px; }
-    .muted { color: var(--muted); }
-
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 20px 0;
+    footer{
+      padding: 26px 0 36px;
       color: var(--muted);
       font-size: 14px;
     }
 
-    @media (max-width: 900px) {
-      .grid { grid-template-columns: 1fr; }
+    @media (max-width: 920px){
+      .projects-track{
+        height: auto;
+        flex-direction: column;
+      }
+      .project-item{
+        height: 220px;
+      }
+      .projects-track:hover .project-item{ flex: 1; }
+      .projects-track:hover .project-item:hover{ flex: 1; min-width: 0; }
+      .dropdown-panel{ width: min(340px, calc(100vw - 40px)); }
+    }
+
+    @media (max-width: 700px){
+      .nav{
+        height: auto;
+        padding: 10px 0;
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .nav-links{
+        justify-content: space-between;
+        flex-wrap: wrap;
+      }
+      .card{ padding: 22px; }
     }
   </style>
 </head>
 
 <body>
-  <header>
-    <div class="container header-inner">
-      <a class="logo" href="#top">Jerry Zhang</a>
-      <nav>
-        <a href="#about">About</a>
-        <a href="#projects">Projects</a>
-        <a href="#contact">Contact</a>
-      </nav>
+  <!-- NAV -->
+  <div class="nav-wrap">
+    <div class="container nav">
+      <a class="brand" href="#top" aria-label="Home">Jerry Zhang</a>
+
+      <div class="nav-links">
+        <a class="nav-link" href="#about">About</a>
+
+        <div class="dropdown">
+          <a class="nav-link dropdown-trigger" href="#projects" aria-haspopup="true" aria-expanded="false">
+            Projects <span class="chev" aria-hidden="true">▾</span>
+          </a>
+
+          <!-- Dropdown links to sub-pages -->
+          <div class="dropdown-panel" role="menu" aria-label="Projects menu">
+            <div class="dropdown-title">Project pages</div>
+
+            <a class="dropdown-item" href="projects/project-1.html" role="menuitem">
+              <strong>Project 1</strong>
+              <span>Placeholder — short 1-line summary</span>
+            </a>
+            <a class="dropdown-item" href="projects/project-2.html" role="menuitem">
+              <strong>Project 2</strong>
+              <span>Placeholder — short 1-line summary</span>
+            </a>
+            <a class="dropdown-item" href="projects/project-3.html" role="menuitem">
+              <strong>Project 3</strong>
+              <span>Placeholder — short 1-line summary</span>
+            </a>
+            <a class="dropdown-item" href="projects/project-4.html" role="menuitem">
+              <strong>Project 4</strong>
+              <span>Placeholder — short 1-line summary</span>
+            </a>
+            <a class="dropdown-item" href="projects/project-5.html" role="menuitem">
+              <strong>Project 5</strong>
+              <span>Placeholder — short 1-line summary</span>
+            </a>
+          </div>
+        </div>
+
+        <a class="nav-link" href="resume.html">Resume</a>
+        <a class="nav-link" href="#contact">Contact</a>
+        <a class="nav-cta" href="resume.html">View Resume</a>
+      </div>
     </div>
-  </header>
+  </div>
 
-  <main id="top">
-    <section class="hero">
-      <div class="container">
-        <p class="muted">Electrical Engineering • UBC</p>
-        <h1>Hi, I’m Jerry.</h1>
-        <p class="subtitle">
-          I’m a second-year Electrical Engineering student at the University of British Columbia.
-          This is my personal website where I share engineering projects and what I’m currently learning.
+  <div class="spacer" id="top"></div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <div class="card">
+        <p class="kicker">UBC Electrical Engineering • Year 2</p>
+        <h1>Hi my name is Jerry Zhang</h1>
+        <p class="lead">
+          I am a second-year Electrical Engineering student at UBC. This site is my portfolio: selected projects,
+          what I’m learning, and links to code and demos.
         </p>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section id="about" class="section">
-      <div class="container">
+  <!-- ABOUT -->
+  <section class="section" id="about">
+    <div class="container">
+      <div class="card">
         <h2>About</h2>
-        <p>
-          I’m building experience across hardware and software, and I enjoy working on practical projects.
+        <p class="lead">
+          I like projects that connect theory to reality—embedded systems, digital design, and software that is reliable and well-structured.
+          I’m gradually adding project write-ups with clear goals, implementation details, and results.
         </p>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section id="projects" class="section">
-      <div class="container">
+  <!-- PROJECTS (NEW HORIZONTAL EXPAND FORMAT) -->
+  <section class="section" id="projects">
+    <div class="container">
+      <div class="card">
         <h2>Projects</h2>
-        <p class="muted">I’ll add detailed write-ups here as projects are completed.</p>
+        <p class="lead" style="margin-bottom: 12px;">
+          Hover over a project to expand it. Click any project to open its full page.
+        </p>
 
-        <div class="grid">
-          <article class="card">
-            <h3>Project 1 (Coming Soon)</h3>
-            <p class="muted">Short description of what it does + tech used.</p>
-          </article>
+        <div class="projects-strip" aria-label="Project gallery">
+          <div class="projects-track">
+            <!-- Project 1 -->
+            <div class="project-item">
+              <a class="project-link" href="projects/project-1.html" aria-label="Open Project 1"></a>
+              <div class="project-media" style="background-image: linear-gradient(135deg, #111827, #0b1220);"></div>
+              <div class="project-content">
+                <h3 class="project-title">Project 1</h3>
+                <p class="project-desc">Short description shown on hover. Replace with what you built + main tech.</p>
+              </div>
+            </div>
 
-          <article class="card">
-            <h3>Project 2 (Coming Soon)</h3>
-            <p class="muted">Short description of what it does + tech used.</p>
-          </article>
+            <!-- Project 2 -->
+            <div class="project-item">
+              <a class="project-link" href="projects/project-2.html" aria-label="Open Project 2"></a>
+              <div class="project-media" style="background-image: linear-gradient(135deg, #0f172a, #1f2937);"></div>
+              <div class="project-content">
+                <h3 class="project-title">Project 2</h3>
+                <p class="project-desc">Short description shown on hover. Replace with what you built + main tech.</p>
+              </div>
+            </div>
 
-          <article class="card">
-            <h3>Project 3 (Coming Soon)</h3>
-            <p class="muted">Short description of what it does + tech used.</p>
-          </article>
+            <!-- Project 3 -->
+            <div class="project-item">
+              <a class="project-link" href="projects/project-3.html" aria-label="Open Project 3"></a>
+              <div class="project-media" style="background-image: linear-gradient(135deg, #111827, #334155);"></div>
+              <div class="project-content">
+                <h3 class="project-title">Project 3</h3>
+                <p class="project-desc">Short description shown on hover. Replace with what you built + main tech.</p>
+              </div>
+            </div>
+
+            <!-- Project 4 -->
+            <div class="project-item">
+              <a class="project-link" href="projects/project-4.html" aria-label="Open Project 4"></a>
+              <div class="project-media" style="background-image: linear-gradient(135deg, #0b1220, #0f172a);"></div>
+              <div class="project-content">
+                <h3 class="project-title">Project 4</h3>
+                <p class="project-desc">Short description shown on hover. Replace with what you built + main tech.</p>
+              </div>
+            </div>
+
+            <!-- Project 5 -->
+            <div class="project-item">
+              <a class="project-link" href="projects/project-5.html" aria-label="Open Project 5"></a>
+              <div class="project-media" style="background-image: linear-gradient(135deg, #111827, #0a0f1c);"></div>
+              <div class="project-content">
+                <h3 class="project-title">Project 5</h3>
+                <p class="project-desc">Short description shown on hover. Replace with what you built + main tech.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT (UPDATED; NO GITHUB) -->
+  <section class="section" id="contact">
+    <div class="container">
+      <div class="card">
+        <h2>Contact</h2>
+        <p class="lead">Best way to reach me:</p>
+
+        <div class="contact-line">
+          <a class="pill" href="mailto:zhangjerry53@gmail.com">zhangjerry53@gmail.com</a>
+          <a class="pill" href="https://linkedin.com/in/jerry-zhang-b47384383" target="_blank" rel="noopener">
+            linkedin.com/in/jerry-zhang-b47384383
+          </a>
         </div>
       </div>
-    </section>
-
-    <section id="contact" class="section">
-      <div class="container">
-        <h2>Contact</h2>
-        <p class="muted">Replace these with your real links:</p>
-        <p>
-          <a href="mailto:youremail@example.com">zhangjerry53@gmail.com</a> ·
-          <a href="#" target="_blank" rel="noopener">linkedin.com/in/jerry-zhang-b47384383</a> ·
-        </p>
-      </div>
-    </section>
-  </main>
+    </div>
+  </section>
 
   <footer>
     <div class="container">
