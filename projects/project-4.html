@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Water Filtration System | Jerry Zhang</title>
+
+    <style>
+      :root {
+        --bg: #ffffff;
+        --text: #0f172a;
+        --muted: #64748b;
+        --border: #e2e8f0;
+        --panel: #f1f9f5; /* Soft Mint Panel */
+        --accent: #10b981; /* Emerald Green */
+        --r: 16px;
+
+        --s-4: 24px;
+        --s-6: 48px;
+        --nav-h: 72px;
+        --shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+        line-height: 1.6;
+        color: var(--text);
+        background: var(--bg);
+      }
+
+      a { color: inherit; text-decoration: none; }
+
+      /* NAV */
+      .nav-wrap {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .nav {
+        height: var(--nav-h);
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 24px;
+      }
+
+      .brand { font-weight: 750; letter-spacing: -0.02em; }
+      .nav-links { display: flex; gap: 12px; }
+      .nav-link {
+        padding: 8px 12px;
+        border-radius: 8px;
+        color: var(--muted);
+        font-size: 0.95rem;
+        transition: 0.2s;
+      }
+      .nav-link:hover { background: #ecfdf5; color: var(--accent); }
+
+      /* BUTTON STYLE */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background: var(--accent); /* Now Green */
+        color: white;
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: transform 0.2s, opacity 0.2s;
+        border: none;
+        cursor: pointer;
+      }
+      .btn:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+        color: white;
+      }
+      .btn svg { width: 18px; height: 18px; fill: currentColor; }
+
+      /* MAIN LAYOUT */
+      main {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 64px 24px;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: var(--s-6);
+        align-items: start;
+      }
+
+      .stack { display: grid; gap: var(--s-4); }
+
+      .kicker {
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--accent);
+        margin-bottom: 8px;
+      }
+
+      h1 {
+        font-size: clamp(2.5rem, 4vw, 3.2rem);
+        line-height: 1.1;
+        letter-spacing: -0.04em;
+        margin: 0;
+      }
+
+      .lead p {
+        font-size: 1.1rem;
+        color: var(--muted);
+        max-width: 65ch;
+        margin: 0 0 1.5rem;
+      }
+
+      /* CHIPS */
+      .chips { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; }
+      .chip {
+        padding: 6px 14px;
+        border: 1px solid var(--border);
+        border-radius: 100px;
+        font-size: 0.85rem;
+        color: var(--muted);
+        background: #fff;
+        font-weight: 500;
+      }
+
+      /* PANELS & CALLOUTS */
+      .panel {
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        background: var(--panel);
+        padding: 24px;
+      }
+
+      .callouts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+      .callout strong { display: block; margin-bottom: 4px; font-size: 0.95rem; color: var(--accent); }
+      .callout { font-size: 0.9rem; color: var(--muted); }
+
+      /* MEDIA SIDEBAR (Video only) */
+      .media {
+        border-radius: var(--r);
+        overflow: hidden;
+        border: 1px solid var(--accent);
+        box-shadow: var(--shadow);
+        background: #000;
+      }
+      .media video { width: 100%; display: block; }
+
+      .dl { display: grid; grid-template-columns: 100px 1fr; gap: 12px; font-size: 0.95rem; margin-bottom: 24px; }
+      .dl-label { color: var(--muted); }
+
+      /* BUILD STEPS */
+      .section { margin-top: 80px; }
+      .section-head {
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 16px;
+        margin-bottom: 32px;
+      }
+      .section-head h2 { margin: 0; font-size: 1.75rem; letter-spacing: -0.02em; }
+
+      .step {
+        display: grid;
+        grid-template-columns: 60px 1fr;
+        gap: 24px;
+        padding: 32px 0;
+        border-bottom: 1px solid #f1f5f9;
+      }
+      .step:last-child { border: none; }
+      .num { font-weight: 800; color: var(--accent); font-size: 1.25rem; }
+      .step h3 { margin: 0 0 8px; font-size: 1.1rem; }
+      .step ul { margin: 0; padding-left: 1.2rem; color: var(--muted); }
+
+      /* LOWER GRID */
+      .lower { display: grid; grid-template-columns: 1.4fr 1fr; gap: var(--s-6); margin-top: 48px; }
+      .lower h2 { font-size: 1.25rem; margin-bottom: 16px; }
+
+      @media (max-width: 980px) {
+        .layout, .lower { grid-template-columns: 1fr; gap: 40px; }
+        .callouts { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="nav-wrap">
+      <div class="nav">
+        <a class="brand" href="../index.html">Jerry Zhang</a>
+        <nav class="nav-links">
+          <a class="nav-link" href="../projects.html">Projects</a>
+          <a class="nav-link" href="../resume.html">Resume</a>
+          <a class="nav-link" href="../index.html#contact">Contact</a>
+        </nav>
+      </div>
+    </div>
+
+    <main>
+      <div class="layout">
+        <div class="stack">
+          <div>
+            <p class="kicker">Project 04</p>
+            <h1>Automated Water Pre-Treatment System</h1>
+          </div>
+
+          <div class="lead">
+            <p>
+              Developed as a solution for water safety in remote communities, this automated plant integrates chemical dispensing, mechanical mixing, and multi-stage filtration. The project focuses on a reliable "Set and Forget" design for pre-treating surface water.
+            </p>
+
+            <p>
+              Every custom component—from the pivoting alum dispenser to the curved-blade impeller—was modeled from scratch in <strong>Autodesk Inventor</strong>. These parts were then 3D printed, assembled onto a mechatronic chassis, and driven by an Arduino MEGA through a rigorous testing phase to ensure precise 0.8g dosing and clear water output.
+            </p>
+          </div>
+
+          <div class="chips">
+            <span class="chip">Autodesk Inventor (CAD)</span>
+            <span class="chip">3D Printing & Assembly</span>
+            <span class="chip">Arduino MEGA</span>
+            <span class="chip">Mechatronics Integration</span>
+            <span class="chip">Fluid Dynamics</span>
+          </div>
+
+          <div class="callouts">
+            <div class="panel callout">
+              <strong>CAD-to-Reality</strong>
+              Used Inventor to design mechanical interfaces that ensure airtight mixing and clog-free powder dispensing.
+            </div>
+            <div class="panel callout">
+              <strong>Validation Testing</strong>
+              Completed multiple cycles with bentonite-clay water to verify the filtration efficiency and sensor accuracy.
+            </div>
+          </div>
+        </div>
+
+        <div class="stack">
+          <figure class="media">
+            <video controls>
+              <source src="../assets/water-system.mov" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </figure>
+
+          <aside class="panel">
+            <h2 style="font-size: 1.1rem; margin-bottom: 16px;">System Details</h2>
+            <div class="dl">
+              <div class="dl-label">Controller</div>
+              <div>Arduino MEGA</div>
+              <div class="dl-label">Fabrication</div>
+              <div>FDM 3D Printing</div>
+              <div class="dl-label">Logic</div>
+              <div>Finite State Machine</div>
+              <div class="dl-label">CAD Tool</div>
+              <div>Autodesk Inventor</div>
+            </div>
+            
+            <a href="../assets/Team-193_APSC101_9T.docx" download class="btn" style="width: 100%;">
+              <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+              Download Formal Report
+            </a>
+          </aside>
+        </div>
+      </div>
+
+      
+
+      <div class="section">
+        <div class="section-head">
+          <h2>Design & Development Process</h2>
+        </div>
+
+        <div class="steps">
+          <div class="step">
+            <div class="num">01</div>
+            <div>
+              <h3>Inventor CAD Modeling</h3>
+              <ul>
+                <li>Designed the primary dispensing assembly with a pivoting mechanism to prevent alum powder bridging.</li>
+                <li>Modeled the internal impeller with a 4-blade curved design to maximize turbulence for flocculation.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="num">02</div>
+            <div>
+              <h3>3D Printing & Fabrication</h3>
+              <ul>
+                <li>Optimized print orientation for structural integrity and waterproofing.</li>
+                <li>Post-processed components for magnetic coupling between the external motor and internal mixer.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="num">03</div>
+            <div>
+              <h3>Assembly & Mechatronics</h3>
+              <ul>
+                <li>Integrated turbidity sensors and submersible pumps into the Arduino-controlled chassis.</li>
+                <li>Applied silicone sealing to all mechatronic-fluid interfaces to ensure safety and system longevity.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="num">04</div>
+            <div>
+              <h3>System Testing</h3>
+              <ul>
+                <li>Iteratively tested the FSM logic to handle edge cases like empty chemical hoppers or sensor failure.</li>
+                <li>Measured sediment removal rates against baseline turbidity to confirm safe potable water output.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lower">
+        <div>
+          <h2>Core Skills</h2>
+          <ul style="color: var(--muted); padding-left: 1.2rem;">
+            <li>Mechanical Design (Autodesk Inventor)</li>
+            <li>Additive Manufacturing (3D Printing)</li>
+            <li>Embedded Programming (Arduino MEGA)</li>
+            <li>Engineering Documentation & Reporting</li>
+          </ul>
+
+          <h2 style="margin-top: 32px;">Challenges & Solutions</h2>
+          <ul style="color: var(--muted); padding-left: 1.2rem;">
+            <li><strong>Leak Prevention:</strong> Solved by using magnetic coupling, eliminating the need for a drive-shaft hole in the tank.</li>
+            <li><strong>Dispensing Accuracy:</strong> Iterated on the hopper design in CAD to ensure a consistent 0.8g dose per cycle.</li>
+          </ul>
+        </div>
+
+        <div>
+          <h2>Final Outcome</h2>
+          <p style="color: var(--muted);">
+            A fully validated prototype that automates complex water treatment chemistry into a single-button operation, meeting all functional requirements for remote community deployment.
+          </p>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

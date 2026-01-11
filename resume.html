@@ -9,21 +9,26 @@
     :root{
       --bg:#f6f7f9; --surface:#fff; --text:#0f172a; --muted:#475569; --border:#e5e7eb;
       --shadow-sm:0 8px 20px rgba(15, 23, 42, 0.06); --radius:16px;
-      --nav-bg:#2f343a; --nav-text:#e7e9ee; --nav-muted:#b9c0cb; --nav-hover:rgba(255,255,255,0.10);
-      --nav-outline:rgba(255,255,255,0.18); --nav-h:72px;
+
+      --nav-bg: rgba(245,246,248,0.96);
+      --nav-text:#0f172a; --nav-muted:#475569; --nav-hover:rgba(15,23,42,0.06); --nav-outline:rgba(15,23,42,0.10);
+      --nav-h:72px;
     }
+
     *{box-sizing:border-box}
     body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;line-height:1.6;color:var(--text);background:var(--bg)}
     a{color:inherit;text-decoration:none}
     .container{width:min(1100px, calc(100% - 40px)); margin:0 auto}
-    .nav-wrap{position:sticky;top:0;z-index:1000;background:var(--nav-bg);border-bottom:1px solid rgba(255,255,255,0.10)}
+
+    .nav-wrap{position:sticky;top:0;z-index:1000;background:var(--nav-bg);backdrop-filter: blur(10px);border-bottom:1px solid rgba(229,231,235,0.9)}
     .nav{height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;gap:18px}
     .brand{font-weight:750;letter-spacing:-0.02em;padding:10px 12px;border-radius:12px;color:var(--nav-text);transition:background 140ms ease}
     .brand:hover{background:var(--nav-hover)}
     .nav-links{display:flex;align-items:center;gap:8px}
     .nav-link{display:inline-flex;align-items:center;padding:10px 12px;border-radius:12px;color:var(--nav-muted);transition:background 140ms ease,color 140ms ease,box-shadow 140ms ease}
-    .nav-link:hover{background:var(--nav-hover);color:var(--nav-text);box-shadow:inset 0 0 0 1px var(--nav-outline)}
-    .page{padding:28px 0}
+    .nav-link:hover{background:var(--nav-hover);color:var(--nav-text);box-shadow: inset 0 0 0 1px var(--nav-outline)}
+
+    main{padding:26px 0 40px}
     .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:28px}
     h1{margin:0 0 10px;letter-spacing:-0.03em}
     .muted{color:var(--muted)}
@@ -38,37 +43,35 @@
     }
   </style>
 </head>
+
 <body>
   <div class="nav-wrap">
     <div class="container nav">
       <a class="brand" href="index.html">Jerry Zhang</a>
       <div class="nav-links">
-        <a class="nav-link" href="index.html#projects">Projects</a>
+        <a class="nav-link" href="projects.html">Projects</a>
+        <a class="nav-link" href="ideas.html">Ideas</a>
+        <a class="nav-link" href="resume.html">Resume</a>
         <a class="nav-link" href="index.html#contact">Contact</a>
       </div>
     </div>
   </div>
 
-  <main class="page">
+  <main>
     <div class="container">
       <div class="card">
         <h1>Resume</h1>
         <p class="muted">
-          Add your resume PDF to <code>assets/</code> and link it here. You can also paste a text version below.
+          Upload your resume PDF into <code>assets/</code> and link it here.
         </p>
 
-        <!-- Option A: Link to a PDF you upload later -->
         <a class="cta" href="assets/Jerry_Zhang_Resume.pdf" target="_blank" rel="noopener">
           Open Resume PDF
         </a>
 
-        <!-- Option B: Text resume (optional) -->
-        <h2 style="margin-top:18px;">Highlights</h2>
-        <ul class="muted">
-          <li>Second-year Electrical Engineering student at UBC</li>
-          <li>Areas: embedded, digital design, software</li>
-          <li>Selected projects and coursework</li>
-        </ul>
+        <p class="muted" style="margin-top:14px;">
+          If the link 404s, it means the PDF file name/path doesn’t match.
+        </p>
       </div>
     </div>
   </main>

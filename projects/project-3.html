@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>C Elevator System | Jerry Zhang</title>
+
+    <style>
+      :root {
+        --bg: #ffffff;
+        --text: #0f172a;
+        --muted: #64748b;
+        --border: #e2e8f0;
+        --panel: #f8fafc;
+        --accent: #3b82f6; /* Logic/Blue theme */
+        --r: 16px;
+
+        --s-4: 24px;
+        --s-6: 48px;
+        --nav-h: 72px;
+        --shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+        line-height: 1.6;
+        color: var(--text);
+        background: var(--bg);
+      }
+
+      a { color: inherit; text-decoration: none; }
+
+      /* NAV */
+      .nav-wrap {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .nav {
+        height: var(--nav-h);
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 24px;
+      }
+
+      .brand { font-weight: 750; letter-spacing: -0.02em; }
+      .nav-links { display: flex; gap: 12px; }
+      .nav-link {
+        padding: 8px 12px;
+        border-radius: 8px;
+        color: var(--muted);
+        font-size: 0.95rem;
+        transition: 0.2s;
+      }
+      .nav-link:hover { background: #f1f5f9; color: var(--text); }
+
+      /* BUTTON STYLE */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background: var(--text);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: transform 0.2s, background 0.2s;
+        border: none;
+        cursor: pointer;
+      }
+      .btn:hover {
+        background: #1e293b;
+        transform: translateY(-1px);
+        color: white;
+      }
+      .btn svg { width: 18px; height: 18px; fill: currentColor; }
+
+      /* MAIN LAYOUT */
+      main {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 64px 24px;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: var(--s-6);
+        align-items: start;
+      }
+
+      .stack { display: grid; gap: var(--s-4); }
+
+      .kicker {
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--accent);
+        margin-bottom: 8px;
+      }
+
+      h1 {
+        font-size: clamp(2.5rem, 4vw, 3.2rem);
+        line-height: 1.1;
+        letter-spacing: -0.04em;
+        margin: 0;
+      }
+
+      .lead p {
+        font-size: 1.1rem;
+        color: var(--muted);
+        max-width: 65ch;
+        margin: 0 0 1.5rem;
+      }
+
+      /* CHIPS */
+      .chips { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; }
+      .chip {
+        padding: 6px 14px;
+        border: 1px solid var(--border);
+        border-radius: 100px;
+        font-size: 0.85rem;
+        color: var(--muted);
+        background: #fff;
+        font-weight: 500;
+      }
+
+      /* PANELS & CALLOUTS */
+      .panel {
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        background: var(--panel);
+        padding: 24px;
+      }
+
+      .callouts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+      .callout strong { display: block; margin-bottom: 4px; font-size: 0.95rem; color: var(--accent); }
+      .callout { font-size: 0.9rem; color: var(--muted); }
+
+      /* MEDIA & INFO SIDEBAR */
+      .media {
+        border-radius: var(--r);
+        overflow: hidden;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+      }
+      .media img { width: 100%; display: block; }
+
+      .dl { display: grid; grid-template-columns: 100px 1fr; gap: 12px; font-size: 0.95rem; margin-bottom: 24px; }
+      .dl-label { color: var(--muted); }
+
+      /* BUILD STEPS */
+      .section { margin-top: 80px; }
+      .section-head {
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 16px;
+        margin-bottom: 32px;
+      }
+      .section-head h2 { margin: 0; font-size: 1.75rem; letter-spacing: -0.02em; }
+
+      .step {
+        display: grid;
+        grid-template-columns: 60px 1fr;
+        gap: 24px;
+        padding: 32px 0;
+        border-bottom: 1px solid #f1f5f9;
+      }
+      .step:last-child { border: none; }
+      .num { font-weight: 800; color: var(--accent); font-size: 1.25rem; }
+      .step h3 { margin: 0 0 8px; font-size: 1.1rem; }
+      .step ul { margin: 0; padding-left: 1.2rem; color: var(--muted); }
+
+      /* LOWER GRID */
+      .lower { display: grid; grid-template-columns: 1.4fr 1fr; gap: var(--s-6); margin-top: 48px; }
+      .lower h2 { font-size: 1.25rem; margin-bottom: 16px; }
+
+      @media (max-width: 980px) {
+        .layout, .lower { grid-template-columns: 1fr; gap: 40px; }
+        .callouts { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="nav-wrap">
+      <div class="nav">
+        <a class="brand" href="../index.html">Jerry Zhang</a>
+        <nav class="nav-links">
+          <a class="nav-link" href="../projects.html">Projects</a>
+          <a class="nav-link" href="../resume.html">Resume</a>
+          <a class="nav-link" href="../index.html#contact">Contact</a>
+        </nav>
+      </div>
+    </div>
+
+    <main>
+      <div class="layout">
+        <div class="stack">
+          <div>
+            <p class="kicker">Project 03</p>
+            <h1>C-Based Elevator Control System</h1>
+          </div>
+
+          <div class="lead">
+            <p>
+              This project involves the design and implementation of an elevator management system using the C programming language. Developed as part of MREN 178, the system focuses on algorithmic efficiency and data structure application to handle multi-floor requests in real-time.
+            </p>
+
+            <p>
+              The control logic optimizes the elevator's pathing by managing a queue of passenger requests, ensuring minimal wait times and energy efficiency. It simulates a high-load environment where multiple inputs must be processed synchronously without system hang-ups.
+            </p>
+          </div>
+
+          <div class="chips">
+            <span class="chip">C Programming</span>
+            <span class="chip">Data Structures</span>
+            <span class="chip">Queue Management</span>
+            <span class="chip">Embedded Logic</span>
+            <span class="chip">Algorithm Design</span>
+          </div>
+
+          <div class="callouts">
+            <div class="panel callout">
+              <strong>Request Optimization</strong>
+              Utilizes custom data structures to sort floor calls and determine the most efficient travel direction.
+            </div>
+            <div class="panel callout">
+              <strong>Real-Time Simulation</strong>
+              Built to handle concurrent inputs, simulating a real-world building environment with multiple floor requests.
+            </div>
+          </div>
+        </div>
+
+        <div class="stack">
+          <figure class="media">
+            <img src="../assets/Elavator.jpg" alt="Elevator System Logic Build" />
+          </figure>
+
+          <aside class="panel">
+            <h2 style="font-size: 1.1rem; margin-bottom: 16px;">System Details</h2>
+            <div class="dl">
+              <div class="dl-label">Language</div>
+              <div>C (Standard)</div>
+              <div class="dl-label">Architecture</div>
+              <div>Modular Design</div>
+              <div class="dl-label">Key Structure</div>
+              <div>Priority Queues</div>
+              <div class="dl-label">Course</div>
+              <div>MREN 178 Labs</div>
+            </div>
+            <a href="https://github.com/Linknerd/MREN178Labs" target="_blank" class="btn" style="width: 100%;">
+              <svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.43.372.823 1.102.823 2.222 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+              View detail on github
+            </a>
+          </aside>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head">
+          <h2>Technical Implementation</h2>
+        </div>
+
+        <div class="steps">
+          <div class="step">
+            <div class="num">01</div>
+            <div>
+              <h3>Request Handling Logic</h3>
+              <ul>
+                <li>Implemented an arrival queue to store floor calls from passengers.</li>
+                <li>Developed a look-ahead algorithm to determine if the elevator should stop at a floor while already in motion.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="num">02</div>
+            <div>
+              <h3>Data Structure Design</h3>
+              <ul>
+                <li>Used Linked Lists/Queues for dynamic request management.</li>
+                <li>Optimized memory allocation to ensure the system remains stable over long periods of operation.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="num">03</div>
+            <div>
+              <h3>System Synchronization</h3>
+              <ul>
+                <li>Managed floor state transitions (Opening/Closing/Moving) using a Finite State Machine (FSM).</li>
+                <li>Handled "up" and "down" priority logic to mimic modern high-speed elevator behavior.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lower">
+        <div>
+          <h2>Core Skills</h2>
+          <ul style="color: var(--muted); padding-left: 1.2rem;">
+            <li>Advanced C Programming & Pointers</li>
+            <li>Dynamic Data Structure Implementation</li>
+            <li>Finite State Machine (FSM) Design</li>
+            <li>Algorithmic Optimization & Complexity Analysis</li>
+          </ul>
+
+          <h2 style="margin-top: 32px;">Development Challenges</h2>
+          <ul style="color: var(--muted); padding-left: 1.2rem;">
+            <li><strong>Directional Conflict:</strong> Solving cases where passengers call for different directions simultaneously.</li>
+            <li><strong>Concurrency:</strong> Ensuring that adding a new request mid-travel doesn't interrupt the current motor/simulation state.</li>
+          </ul>
+        </div>
+
+        <div>
+          <h2>Outcome</h2>
+          <p style="color: var(--muted);">
+            A fully functional simulation of an elevator controller that demonstrated a high level of proficiency in C programming and the practical application of data structures in mechatronic systems.
+          </p>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

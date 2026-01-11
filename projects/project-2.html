@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Autonomous MiniBot | Jerry Zhang</title>
+
+    <style>
+      :root {
+        --bg: #ffffff;
+        --text: #0f172a;
+        --muted: #64748b;
+        --border: #e2e8f0;
+        --panel: #f8fafc;
+        --accent: #ef4444; /* Changed to Red Theme */
+        --r: 16px;
+
+        --s-4: 24px;
+        --s-6: 48px;
+        --nav-h: 72px;
+        --shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+        line-height: 1.6;
+        color: var(--text);
+        background: var(--bg);
+      }
+
+      a { color: inherit; text-decoration: none; }
+
+      /* NAV */
+      .nav-wrap {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .nav {
+        height: var(--nav-h);
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 24px;
+      }
+
+      .brand { font-weight: 750; letter-spacing: -0.02em; }
+      .nav-links { display: flex; gap: 12px; }
+      .nav-link {
+        padding: 8px 12px;
+        border-radius: 8px;
+        color: var(--muted);
+        font-size: 0.95rem;
+        transition: 0.2s;
+      }
+      .nav-link:hover { background: #f1f5f9; color: var(--text); }
+
+      /* BUTTON STYLE */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background: var(--accent);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: transform 0.2s, opacity 0.2s;
+        border: none;
+        cursor: pointer;
+      }
+      .btn:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+        color: white;
+      }
+      .btn svg { width: 20px; height: 20px; fill: currentColor; }
+
+      /* MAIN LAYOUT */
+      main {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 64px 24px;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: var(--s-6);
+        align-items: start;
+      }
+
+      .stack { display: grid; gap: var(--s-4); }
+
+      .kicker {
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--accent);
+        margin-bottom: 8px;
+      }
+
+      h1 {
+        font-size: clamp(2.5rem, 4vw, 3.2rem);
+        line-height: 1.1;
+        letter-spacing: -0.04em;
+        margin: 0;
+      }
+
+      .lead p {
+        font-size: 1.1rem;
+        color: var(--muted);
+        max-width: 65ch;
+        margin: 0 0 1.5rem;
+      }
+
+      /* CHIPS */
+      .chips { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; }
+      .chip {
+        padding: 6px 14px;
+        border: 1px solid var(--border);
+        border-radius: 100px;
+        font-size: 0.85rem;
+        color: var(--muted);
+        background: #fff;
+        font-weight: 500;
+      }
+
+      /* PANELS & CALLOUTS */
+      .panel {
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        background: var(--panel);
+        padding: 24px;
+      }
+
+      .callouts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+      .callout strong { display: block; margin-bottom: 4px; font-size: 0.95rem; color: var(--accent); }
+      .callout { font-size: 0.9rem; color: var(--muted); }
+
+      /* MEDIA & INFO SIDEBAR */
+      .media {
+        border-radius: var(--r);
+        overflow: hidden;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+      }
+      .media img { width: 100%; display: block; }
+
+      .dl { display: grid; grid-template-columns: 100px 1fr; gap: 12px; font-size: 0.95rem; margin-bottom: 24px; }
+      .dl-label { color: var(--muted); }
+
+      /* BUILD STEPS */
+      .section { margin-top: 80px; }
+      .section-head {
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 16px;
+        margin-bottom: 32px;
+      }
+      .section-head h2 { margin: 0; font-size: 1.75rem; letter-spacing: -0.02em; }
+
+      .step {
+        display: grid;
+        grid-template-columns: 60px 1fr;
+        gap: 24px;
+        padding: 32px 0;
+        border-bottom: 1px solid #f1f5f9;
+      }
+      .step:last-child { border: none; }
+      .num { font-weight: 800; color: var(--accent); font-size: 1.25rem; }
+      .step h3 { margin: 0 0 8px; font-size: 1.1rem; }
+      .step ul { margin: 0; padding-left: 1.2rem; color: var(--muted); }
+
+      /* LOWER GRID */
+      .lower { display: grid; grid-template-columns: 1.4fr 1fr; gap: var(--s-6); margin-top: 48px; }
+      .lower h2 { font-size: 1.25rem; margin-bottom: 16px; }
+
+      @media (max-width: 980px) {
+        .layout, .lower { grid-template-columns: 1fr; gap: 40px; }
+        .callouts { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="nav-wrap">
+      <div class="nav">
+        <a class="brand" href="../index.html">Jerry Zhang</a>
+        <nav class="nav-links">
+          <a class="nav-link" href="../projects.html">Projects</a>
+          <a class="nav-link" href="../resume.html">Resume</a>
+          <a class="nav-link" href="../index.html#contact">Contact</a>
+        </nav>
+      </div>
+    </div>
+
+    <main>
+      <div class="layout">
+        <div class="stack">
+          <div>
+            <p class="kicker">Project 02</p>
+            <h1>Autonomous Self-Guided MiniBot</h1>
+          </div>
+
+          <div class="lead">
+            <p>
+              This project is a self-guided robot built to navigate an arena by following a high-contrast line. It uses a custom-built mechatronic claw for object manipulation and features a complete sensory feedback loop including obstacle detection and status indication.
+            </p>
+
+            <p>
+              The bot relies on dual color sensors positioned on the bottom for navigation, utilizing a "paddle" method where the sensors balance between black and white values to maintain pathing. An ultrasonic sensor acts as the primary eyes of the car, detecting obstacles in front and triggering the claw's action sequence.
+            </p>
+          </div>
+
+          <div class="chips">
+            <span class="chip">Arduino</span>
+            <span class="chip">Ultrasonic Sensing</span>
+            <span class="chip">Dual Color Sensors</span>
+            <span class="chip">Mechatronics</span>
+            <span class="chip">State Feedback</span>
+          </div>
+
+          <div class="callouts">
+            <div class="panel callout">
+              <strong>Navigation Strategy</strong>
+              Dual-sensor paddle logic follows a black line by sensing color transitions in real-time.
+            </div>
+            <div class="panel callout">
+              <strong>Visual Feedback</strong>
+              Integrated LED array (Red, Yellow, Green) indicates the current state: moving, turning, or grabbing.
+            </div>
+          </div>
+        </div>
+
+        <div class="stack">
+          <figure class="media">
+            <img src="../assets/self-guided-car.png" alt="Autonomous MiniBot Project" />
+          </figure>
+
+          <aside class="panel">
+            <h2 style="font-size: 1.1rem; margin-bottom: 16px;">Technical Specs</h2>
+            <div class="dl">
+              <div class="dl-label">Controller</div>
+              <div>Arduino / ItsyBitsy</div>
+              <div class="dl-label">Detection</div>
+              <div>Ultrasonic Sensor</div>
+              <div class="dl-label">Navigation</div>
+              <div>Dual Color Sensors</div>
+              <div class="dl-label">Feedback</div>
+              <div>Status LEDs (R/Y/G)</div>
+            </div>
+            <a href="https://youtu.be/V0Oi0wi9i38" target="_blank" class="btn" style="width: 100%;">
+              <svg viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+              Watch Demo Video
+            </a>
+          </aside>
+        </div>
+      </div>
+      
+      
+
+      <div class="section">
+        <div class="section-head">
+          <h2>Technical Implementation</h2>
+        </div>
+
+        <div class="steps">
+          <div class="step">
+            <div class="num">01</div>
+            <div>
+              <h3>Sensory Wiring & Calibration</h3>
+              <ul>
+                <li>Integrated Ultrasonic sensor for front-end depth perception.</li>
+                <li>Wired status LEDs to specific GPIO pins to display real-time logic states.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="num">02</div>
+            <div>
+              <h3>Dual-Sensor Navigation</h3>
+              <ul>
+                <li>Developed logic to handle "half-black half-white" sensor inputs for smooth line tracking.</li>
+                <li>Mapped analog color sensor values to 0-3000 range for high-precision motor adjustment.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="num">03</div>
+            <div>
+              <h3>Automated Action States</h3>
+              <ul>
+                <li>Created a switch-case state machine for: Forward, Hard Turn, Slight Adjust, and Stop.</li>
+                <li>Synchronized motor stopping with the servo-claw "Lift and Curl" sequence.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lower">
+        <div>
+          <h2>Core Skills</h2>
+          <ul style="color: var(--muted); padding-left: 1.2rem;">
+            <li>Hardware Breadboarding & Wire Management</li>
+            <li>Embedded C++ Programming</li>
+            <li>Sensor Fusion (Ultrasonic + Color)</li>
+            <li>Mechatronic System Integration</li>
+          </ul>
+
+          <h2 style="margin-top: 32px;">Challenges & Solutions</h2>
+          <ul style="color: var(--muted); padding-left: 1.2rem;">
+            <li><strong>Line Detection Latency:</strong> Optimized the map() functions to reduce computation time.</li>
+            <li><strong>Obstacle Accuracy:</strong> Calibrated SENSOR_STOP boundaries to ensure the car stops exactly in front of objects.</li>
+          </ul>
+        </div>
+
+        <div>
+          <h2>Outcome</h2>
+          <p style="color: var(--muted);">
+            A successful build that demonstrated the integration of mechanical assembly, custom electronics, and real-time software control to achieve autonomous navigation and task completion.
+          </p>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

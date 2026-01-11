@@ -1,87 +1,360 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Project 1 | Jerry Zhang</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FPGA VGA Tron Game | Jerry Zhang</title>
 
-  <style>
-    :root{
-      --bg:#f6f7f9; --surface:#fff; --text:#0f172a; --muted:#475569; --border:#e5e7eb;
-      --shadow-sm:0 8px 20px rgba(15, 23, 42, 0.06); --radius:16px;
-      --nav-bg:#2f343a; --nav-text:#e7e9ee; --nav-muted:#b9c0cb; --nav-hover:rgba(255,255,255,0.10);
-      --nav-outline:rgba(255,255,255,0.18); --nav-h:72px;
-    }
-    *{box-sizing:border-box} body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;line-height:1.6;color:var(--text);background:var(--bg)}
-    a{color:inherit;text-decoration:none}
-    .container{width:min(1100px, calc(100% - 40px)); margin:0 auto}
-    .nav-wrap{position:sticky;top:0;z-index:1000;background:var(--nav-bg);border-bottom:1px solid rgba(255,255,255,0.10)}
-    .nav{height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;gap:18px}
-    .brand{font-weight:750;letter-spacing:-0.02em;padding:10px 12px;border-radius:12px;color:var(--nav-text);transition:background 140ms ease}
-    .brand:hover{background:var(--nav-hover)}
-    .nav-links{display:flex;align-items:center;gap:8px}
-    .nav-link{display:inline-flex;align-items:center;padding:10px 12px;border-radius:12px;color:var(--nav-muted);transition:background 140ms ease,color 140ms ease,box-shadow 140ms ease}
-    .nav-link:hover{background:var(--nav-hover);color:var(--nav-text);box-shadow:inset 0 0 0 1px var(--nav-outline)}
-    .page{padding:28px 0}
-    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:28px}
-    h1{margin:0 0 10px;letter-spacing:-0.03em}
-    .muted{color:var(--muted)}
-    .row{display:grid;grid-template-columns:1.2fr 0.8fr;gap:16px;margin-top:14px}
-    .box{border:1px solid var(--border);border-radius:14px;padding:16px}
-    ul{margin:10px 0 0;padding-left:18px}
-    @media(max-width:900px){.row{grid-template-columns:1fr}}
-  </style>
-</head>
-<body>
-  <div class="nav-wrap">
-    <div class="container nav">
-      <a class="brand" href="../index.html">Jerry Zhang</a>
-      <div class="nav-links">
-        <a class="nav-link" href="../index.html#projects">Projects</a>
-        <a class="nav-link" href="../resume.html">Resume</a>
-        <a class="nav-link" href="../index.html#contact">Contact</a>
+    <style>
+      :root {
+        --bg: #ffffff;
+        --text: #0f172a;
+        --muted: #64748b;
+        --border: #e2e8f0;
+        --panel: #f8fafc;
+        --accent: #0ea5e9; /* Consistent Sky Blue for Project 01 */
+        --r: 16px;
+
+        --s-4: 24px;
+        --s-6: 48px;
+        --nav-h: 72px;
+        --shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+        line-height: 1.6;
+        color: var(--text);
+        background: var(--bg);
+      }
+
+      a { color: inherit; text-decoration: none; }
+
+      /* NAV */
+      .nav-wrap {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .nav {
+        height: var(--nav-h);
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 24px;
+      }
+
+      .brand { font-weight: 750; letter-spacing: -0.02em; }
+      .nav-links { display: flex; gap: 12px; }
+      .nav-link {
+        padding: 8px 12px;
+        border-radius: 8px;
+        color: var(--muted);
+        font-size: 0.95rem;
+        transition: 0.2s;
+      }
+      .nav-link:hover { background: #f1f5f9; color: var(--text); }
+
+      /* BUTTON STYLE */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background: var(--text);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: transform 0.2s, background 0.2s;
+        border: none;
+        cursor: pointer;
+      }
+      .btn:hover {
+        background: #1e293b;
+        transform: translateY(-1px);
+        color: white;
+      }
+      .btn svg { width: 18px; height: 18px; fill: currentColor; }
+
+      /* MAIN LAYOUT */
+      main {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 64px 24px;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: var(--s-6);
+        align-items: start;
+      }
+
+      .stack { display: grid; gap: var(--s-4); }
+
+      /* TITLE SECTION */
+      .title-group {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 20px;
+      }
+
+      .kicker {
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--accent);
+        margin-bottom: 8px;
+      }
+
+      h1 {
+        font-size: clamp(2.5rem, 4vw, 3.2rem);
+        line-height: 1.1;
+        letter-spacing: -0.04em;
+        margin: 0;
+      }
+
+      .lead p {
+        font-size: 1.1rem;
+        color: var(--muted);
+        max-width: 65ch;
+        margin: 0 0 1.5rem;
+      }
+
+      /* CHIPS */
+      .chips { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; }
+      .chip {
+        padding: 6px 14px;
+        border: 1px solid var(--border);
+        border-radius: 100px;
+        font-size: 0.85rem;
+        color: var(--muted);
+        background: #fff;
+        font-weight: 500;
+      }
+
+      /* PANELS & CALLOUTS */
+      .panel {
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        background: var(--panel);
+        padding: 24px;
+      }
+
+      .callouts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+      .callout strong { display: block; margin-bottom: 4px; font-size: 0.95rem; color: var(--accent); }
+      .callout { font-size: 0.9rem; color: var(--muted); }
+
+      /* MEDIA & INFO SIDEBAR */
+      .media {
+        border-radius: var(--r);
+        overflow: hidden;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+      }
+      .media img { width: 100%; display: block; }
+
+      .dl { display: grid; grid-template-columns: 100px 1fr; gap: 12px; font-size: 0.95rem; margin-bottom: 24px; }
+      .dl-label { color: var(--muted); }
+
+      /* BUILD STEPS */
+      .section { margin-top: 80px; }
+      .section-head {
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 16px;
+        margin-bottom: 32px;
+      }
+      .section-head h2 { margin: 0; font-size: 1.75rem; letter-spacing: -0.02em; }
+
+      .step {
+        display: grid;
+        grid-template-columns: 60px 1fr;
+        gap: 24px;
+        padding: 32px 0;
+        border-bottom: 1px solid #f1f5f9;
+      }
+      .step:last-child { border: none; }
+      .num { font-weight: 800; color: var(--accent); font-size: 1.25rem; }
+      .step h3 { margin: 0 0 8px; font-size: 1.1rem; }
+      .step ul { margin: 0; padding-left: 1.2rem; color: var(--muted); }
+
+      /* LOWER GRID */
+      .lower { display: grid; grid-template-columns: 1.4fr 1fr; gap: var(--s-6); margin-top: 48px; }
+      .lower h2 { font-size: 1.25rem; margin-bottom: 16px; }
+
+      /* RESPONSIVE */
+      @media (max-width: 980px) {
+        .layout, .lower { grid-template-columns: 1fr; gap: 40px; }
+        .callouts { grid-template-columns: 1fr; }
+        .title-group { flex-direction: column; align-items: flex-start; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="nav-wrap">
+      <div class="nav">
+        <a class="brand" href="../index.html">Jerry Zhang</a>
+        <nav class="nav-links">
+          <a class="nav-link" href="../projects.html">Projects</a>
+          <a class="nav-link" href="../resume.html">Resume</a>
+          <a class="nav-link" href="../index.html#contact">Contact</a>
+        </nav>
       </div>
     </div>
-  </div>
 
-  <main class="page">
-    <div class="container">
-      <div class="card">
-        <h1>Project 1</h1>
-        <p class="muted">One-sentence summary: what it does + why it matters.</p>
+    <main>
+      <div class="layout">
+        <div class="stack">
+          <div class="title-group">
+            <div>
+              <p class="kicker">Project 01</p>
+              <h1>FPGA VGA Tron-Style Game</h1>
+            </div>
+            <a href="https://github.com/UBCV-CPEN211/lab-10-JerryZhang14" target="_blank" class="btn">
+              <svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.43.372.823 1.102.823 2.222 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+              Code on github
+            </a>
+          </div>
 
-        <div class="row">
-          <section class="box">
-            <h2>Overview</h2>
-            <p class="muted">Write 5–8 lines: problem → approach → outcome.</p>
+          <div class="lead">
+            <p>
+              This is a Tron-inspired game built on an FPGA and displayed on a VGA
+              monitor. Players control a moving line inside a grid arena. As you
+              move, you leave a trail behind you. The goal is to avoid crashing
+              into walls or any trail—once you collide, the round ends.
+            </p>
 
-            <h2 style="margin-top:14px;">Key Contributions</h2>
-            <ul class="muted">
-              <li>What you personally implemented (be specific).</li>
-              <li>One technical highlight (algorithm, protocol, hardware detail).</li>
-              <li>Result (metric, performance, correctness, demo outcome).</li>
-            </ul>
-          </section>
+            <p>
+              Instead of running on a computer program, this game runs directly in
+              digital hardware. The FPGA generates the VGA video signal and updates
+              the game in real time, frame by frame, without relying on a CPU or
+              graphics libraries.
+            </p>
+          </div>
 
-          <aside class="box">
-            <h2>Tech Stack</h2>
-            <ul class="muted">
-              <li>Language / tools</li>
-              <li>Hardware (if applicable)</li>
-              <li>Libraries (if applicable)</li>
-            </ul>
+          <div class="chips">
+            <span class="chip">FPGA</span>
+            <span class="chip">HDL</span>
+            <span class="chip">VGA</span>
+            <span class="chip">FSM</span>
+            <span class="chip">Real-Time Graphics</span>
+          </div>
 
-            <h2 style="margin-top:14px;">Links</h2>
-            <ul class="muted">
-              <li><a href="#" target="_blank" rel="noopener">Source code</a></li>
-              <li><a href="#" target="_blank" rel="noopener">Demo video</a></li>
-              <li><a href="#" target="_blank" rel="noopener">Report / notes</a></li>
-            </ul>
-          </aside>
+          <div class="callouts">
+            <div class="panel callout">
+              <strong>Hardware Driven</strong>
+              No CPU or graphics libraries used; all timing and logic are synchronous hardware blocks.
+            </div>
+            <div class="panel callout">
+              <strong>Persistence Logic</strong>
+              Custom memory mapping tracks the history of player movements to generate the lethal "light trails."
+            </div>
+          </div>
         </div>
 
+        <div class="stack">
+          <figure class="media">
+            <img src="../assets/Tron-Gameplay.jpg" alt="FPGA VGA Tron gameplay screenshot" />
+          </figure>
+
+          <aside class="panel">
+            <h2 style="font-size: 1.1rem; margin-bottom: 16px;">Technical Info</h2>
+            <div class="dl">
+              <div class="dl-label">Type</div>
+              <div>Digital Design / FPGA</div>
+              <div class="dl-label">Display</div>
+              <div>VGA (640x480)</div>
+              <div class="dl-label">Core</div>
+              <div>FSM State Machine</div>
+              <div class="dl-label">Inputs</div>
+              <div>Debounced I/O</div>
+            </div>
+          </aside>
+        </div>
       </div>
-    </div>
-  </main>
-</body>
+
+      
+
+      <div class="section">
+        <div class="section-head">
+          <h2>Build Breakdown</h2>
+        </div>
+
+        <div class="steps">
+          <div class="step">
+            <div class="num">01</div>
+            <div>
+              <h3>VGA Timing Pipeline</h3>
+              <ul>
+                <li>Custom H/V sync timing using pixel counters to generate a stable 60Hz signal.</li>
+                <li>Synchronization of active video regions with RGB output.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="num">02</div>
+            <div>
+              <h3>State Persistence</h3>
+              <ul>
+                <li>Grid-based arena occupancy stored in memory to track player trails.</li>
+                <li>Real-time rendering of trails based on current memory state.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="num">03</div>
+            <div>
+              <h3>Collision Engine</h3>
+              <ul>
+                <li>Integrated hardware logic checking if the player's next pixel is already "occupied."</li>
+                <li>Immediate FSM state transition to Game Over upon collision detection.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lower">
+        <div>
+          <h2>Skills Demonstrated</h2>
+          <ul style="color: var(--muted); padding-left: 1.2rem;">
+            <li>HDL-based FPGA system design (Verilog/VHDL)</li>
+            <li>Timing-accurate VGA signal generation</li>
+            <li>FSM-controlled real-time game logic</li>
+            <li>Synchronous hardware memory management</li>
+          </ul>
+
+          <h2 style="margin-top: 32px;">Challenges & Solutions</h2>
+          <ul style="color: var(--muted); padding-left: 1.2rem;">
+            <li><strong>Stable Video:</strong> Meticulously validated sync pulse boundaries to ensure flicker-free output.</li>
+            <li><strong>Hardware Debouncing:</strong> Implemented signal stabilization for physical button inputs to prevent false moves.</li>
+          </ul>
+        </div>
+
+        <div>
+          <h2>Final Outcome</h2>
+          <p style="color: var(--muted);">
+            A fully playable Tron-style game running entirely in hardware, demonstrating end-to-end FPGA system design and mastery of real-time graphics control without traditional software abstraction.
+          </p>
+        </div>
+      </div>
+    </main>
+  </body>
 </html>
