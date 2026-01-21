@@ -13,8 +13,8 @@
       --accent: #3b82f6;
       --border: #e2e8f0;
       --radius: 20px;
-      --nav-h: 80px; /* Slightly taller for bigger font */
-      --nav-bg: #eef2f6; /* Slightly greyer base for contrast */
+      --nav-h: 80px;
+      --nav-bg: #eef2f6;
     }
 
     * { box-sizing: border-box; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -35,7 +35,7 @@
       inset: 0;
       background: #000;
       z-index: 9999;
-      display: flex;
+      display: none; /* Hidden by default, shown via JS if first visit */
       align-items: center;
       justify-content: center;
       transition: transform 0.8s cubic-bezier(0.8, 0, 0.1, 1);
@@ -59,17 +59,16 @@
       position: sticky;
       top: 0;
       z-index: 1000;
-      background: rgba(238, 242, 246, 0.95); /* Greyer base */
+      background: rgba(238, 242, 246, 0.95);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--border);
     }
     .nav { height: var(--nav-h); display: flex; align-items: center; justify-content: space-between; }
     .brand { font-weight: 850; font-size: 1.2rem; text-decoration: none; color: inherit; letter-spacing: -0.04em; }
-    
     .nav-links { display: flex; gap: 12px; align-items: center; }
     
     .nav-link, .dropdown-trigger { 
-      font-size: 1.05rem; /* Bigger font */
+      font-size: 1.05rem;
       font-weight: 600; 
       color: var(--text); 
       text-decoration: none; 
@@ -81,7 +80,6 @@
       align-items: center;
     }
 
-    /* Hover "Extending out" Box Effect */
     .nav-link:hover, .dropdown:hover .dropdown-trigger { 
       background: var(--surface);
       border-color: var(--border);
@@ -89,7 +87,6 @@
       transform: translateY(-2px);
     }
 
-    /* Dropdown Logic */
     .dropdown { position: relative; }
     .dropdown-content {
       position: absolute;
@@ -254,15 +251,15 @@
         <span class="section-label">Gallery</span>
         <h2>Recent Projects</h2>
         <div class="projects-track">
-          <a href="project1.html" class="project-item">
+          <a href="projects/project-1.html" class="project-item">
             <div class="project-bg" style="background-image: url('assets/Tron-Gameplay.jpg');"></div>
             <div class="project-info"><h3>VGA Tron Game</h3></div>
           </a>
-          <a href="project2.html" class="project-item">
+          <a href="projects/project-2.html" class="project-item">
             <div class="project-bg" style="background-image: url('assets/self-guided-car.png');"></div>
             <div class="project-info"><h3>Guided MiniBot</h3></div>
           </a>
-          <a href="project4.html" class="project-item">
+          <a href="projects/project-4.html" class="project-item">
             <div class="project-bg" style="background-image: url('assets/water-system.jpg');"></div>
             <div class="project-info"><h3>Water Filtration</h3></div>
           </a>
@@ -294,11 +291,21 @@
   </div>
 
   <script>
-    // Intro Loader Logic
+    // Improved Intro Loader Logic using sessionStorage
     window.addEventListener('DOMContentLoaded', () => {
-      setTimeout(() => {
-        document.getElementById('intro-loader').classList.add('loader-hidden');
-      }, 2200);
+      const loader = document.getElementById('intro-loader');
+      
+      // Check if the user has already seen the intro this session
+      if (!sessionStorage.getItem('introSeen')) {
+        loader.style.display = 'flex'; // Show the loader
+        
+        setTimeout(() => {
+          loader.classList.add('loader-hidden');
+          sessionStorage.setItem('introSeen', 'true'); // Save to session
+        }, 2200);
+      } else {
+        loader.style.display = 'none'; // Keep hidden if seen already
+      }
     });
 
     // Copy Email Logic
